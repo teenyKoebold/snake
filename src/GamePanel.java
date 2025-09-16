@@ -34,10 +34,12 @@ public class GamePanel extends JPanel implements ActionListener {
     Image player;
     Image enemy1;
 
-    GamePanel() {
+    boolean withEnemy;
+
+    GamePanel(boolean withEnemy) {
+        this.withEnemy = withEnemy;
         random = new Random();
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
-        this.setBackground(Color.black);
         this.setFocusable(true);
         this.addKeyListener(new MyKeyAdapter());
         background = new ImageIcon(getClass().getResource("/images/background.png")).getImage();
@@ -51,8 +53,10 @@ public class GamePanel extends JPanel implements ActionListener {
         newMouse();
         running = true;
         enemyAlive = true;
-        enemyX[0] = SCREEN_WIDTH - UNIT_SIZE;
-        enemyY[0] = 0;
+        if(withEnemy){
+            enemyX[0] = SCREEN_WIDTH - UNIT_SIZE;
+            enemyY[0] = 0;
+        }  
         timer = new Timer(DELAY, this);
         timer.start();
     }
@@ -67,7 +71,9 @@ public class GamePanel extends JPanel implements ActionListener {
             y[i] = 0;
         }
 
-        respawnEnemy();
+        if(withEnemy){
+            respawnEnemy();
+        }
         startGame();
     }
 
@@ -103,7 +109,7 @@ public class GamePanel extends JPanel implements ActionListener {
                 }
             }
 
-            if(enemyAlive){
+            if(enemyAlive && withEnemy){
                 for (int i = 0; i < enemyParts; i++) {
                     if (i == 0) {
                         g.drawImage(enemy1, enemyX[0], enemyY[0], UNIT_SIZE, UNIT_SIZE, this);
@@ -339,11 +345,13 @@ public class GamePanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (running) {
+            if(withEnemy){
+                enemyMove();
+                enemyCheckCollisions();
+            }
             move();
-            enemyMove();
             checkMouse();
             checkCollisions();
-            enemyCheckCollisions();
         }
         repaint();
     }

@@ -29,12 +29,21 @@ public class GamePanel extends JPanel implements ActionListener {
     Timer timer;
     Random random;
 
+    Image background;
+    Image mouse;
+    Image player;
+    Image enemy1;
+
     GamePanel() {
         random = new Random();
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         this.setBackground(Color.black);
         this.setFocusable(true);
         this.addKeyListener(new MyKeyAdapter());
+        background = new ImageIcon(getClass().getResource("/images/background.png")).getImage();
+        mouse =  new ImageIcon(getClass().getResource("/images/mouse.png")).getImage();
+        player = new ImageIcon(getClass().getResource("/images/player.png")).getImage();
+        enemy1 = new ImageIcon(getClass().getResource("/images/enemy1.png")).getImage();
         startGame();
     }
 
@@ -75,18 +84,19 @@ public class GamePanel extends JPanel implements ActionListener {
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        if(background != null){
+            g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
+        }
         draw(g);
     }
 
     public void draw(Graphics g) {
         if (running) {
-            g.setColor(Color.yellow);
-            g.fillRect(mouseX, mouseY, UNIT_SIZE, UNIT_SIZE);
+            g.drawImage(mouse, mouseX, mouseY, UNIT_SIZE, UNIT_SIZE, this);
 
             for (int i = 0; i < bodyParts; i++) {
                 if (i == 0) {
-                    g.setColor(Color.green);
-                    g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
+                    g.drawImage(player, x[0], y[0], UNIT_SIZE, UNIT_SIZE, this);
                 } else {
                     g.setColor(new Color(181, 230, 29));
                     g.fillRect(x[i], y[i], UNIT_SIZE, UNIT_SIZE);
@@ -96,10 +106,9 @@ public class GamePanel extends JPanel implements ActionListener {
             if(enemyAlive){
                 for (int i = 0; i < enemyParts; i++) {
                     if (i == 0) {
-                        g.setColor(Color.yellow);
-                        g.fillRect(enemyX[i], enemyY[i], UNIT_SIZE, UNIT_SIZE);
+                        g.drawImage(enemy1, enemyX[0], enemyY[0], UNIT_SIZE, UNIT_SIZE, this);
                     } else {
-                        g.setColor(new Color(255, 201, 14));
+                        g.setColor(new Color(255, 217, 99));
                         g.fillRect(enemyX[i], enemyY[i], UNIT_SIZE, UNIT_SIZE);
                     }
                 }

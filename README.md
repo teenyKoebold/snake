@@ -1,18 +1,14 @@
-## Getting Started
+# Features
+![Alt text](/src/images/mouse.png) ![Alt text](/src/images/enemy1.png)
+1. Changed apples to mice 
+2. You can restart the game after game over by pressing 'space' 
+3. You can move using up, down, left, right arrow keys
+4. There are 2 game modes which you can choose from: <br>
+&nbsp;&nbsp;&nbsp;&nbsp; easy = without enemy snake <br>
+&nbsp;&nbsp;&nbsp;&nbsp; hard = with enemy snake
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
-
-## Folder Structure
-
-The workspace contains two folders by default, where:
-
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
-
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+# Possible Additional Features
+![Alt text](/src/images/player.png)<br>
+1. Add more enemy types with different behaviors 
+2. Add a way to change modes aside from the start screen
+3. Add music and sound effects

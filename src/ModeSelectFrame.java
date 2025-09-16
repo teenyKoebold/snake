@@ -8,6 +8,9 @@ public class ModeSelectFrame extends JFrame {
     private GameFrame gameFrame;
     Image background;
 
+    static final int SCREEN_WIDTH = 600;
+    static final int SCREEN_HEIGHT = 600;
+
     public ModeSelectFrame() {
         setTitle("Select Game Mode");
         setSize(600, 600);
@@ -64,6 +67,14 @@ public class ModeSelectFrame extends JFrame {
             if (backgroundImage != null) {
                 g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
             }
+            draw(g);
+        }
+
+        public void draw(Graphics g){
+            g.setColor(Color.yellow);
+            g.setFont(new Font("Ink Free", Font.BOLD, 75));
+            FontMetrics metrics2 = getFontMetrics(g.getFont());
+            g.drawString("Snake", (SCREEN_WIDTH - metrics2.stringWidth("Snake")) / 2, 200);
         }
     }
 }

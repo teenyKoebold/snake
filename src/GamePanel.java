@@ -12,7 +12,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
     final int x[] = new int[GAME_UNITS];
     final int y[] = new int[GAME_UNITS];
-    int bodyParts = 6;
+    int bodyParts = 3;
     int miceEaten;
     char direction = 'R';
 
@@ -37,6 +37,18 @@ public class GamePanel extends JPanel implements ActionListener {
         running = true;
         timer = new Timer(DELAY, this);
         timer.start();
+    }
+
+    public void respawn(){
+        direction = 'R';
+        bodyParts = 3;
+        miceEaten = 0;
+
+        for(int i = 0; i < GAME_UNITS; i++){
+            x[i] = 0;
+            y[i] = 0;
+        }
+        startGame();
     }
 
     public void paintComponent(Graphics g) {
@@ -69,8 +81,21 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     public void newMouse() {
-        mouseX = random.nextInt((int) (SCREEN_WIDTH / UNIT_SIZE)) * UNIT_SIZE;
-        mouseY = random.nextInt((int) (SCREEN_HEIGHT / UNIT_SIZE)) * UNIT_SIZE;
+        boolean validPos = false;
+
+        while(!validPos){
+            mouseX = random.nextInt((int) (SCREEN_WIDTH / UNIT_SIZE)) * UNIT_SIZE;
+            mouseY = random.nextInt((int) (SCREEN_HEIGHT / UNIT_SIZE)) * UNIT_SIZE;
+
+            validPos = true;
+
+            for(int i = 0; i < GAME_UNITS; i++){
+                if(x[i] == mouseX && y[i] == mouseY){
+                    validPos = false;
+                    break;
+                }
+            }
+        }
     }
 
     public void move() {
@@ -176,6 +201,11 @@ public class GamePanel extends JPanel implements ActionListener {
                 case KeyEvent.VK_DOWN:
                     if (direction != 'U') {
                         direction = 'D';
+                    }
+                    break;
+                case KeyEvent.VK_SPACE:
+                    if(!running){
+                        respawn();
                     }
                     break;
             }

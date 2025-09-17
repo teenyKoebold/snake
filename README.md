@@ -12,3 +12,4 @@
 1. Add more enemy types with different behaviors 
 2. Add a way to change modes aside from the start screen
 3. Add music and sound effects
+4. Make controls feel better (e.g. right now pressing two arrow keys simultaneously kills snake)

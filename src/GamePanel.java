@@ -3,39 +3,49 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.util.Random;
 
+// this class represents the main game panel for the snake game
+// it handles drawing, updating, collisions, and controls
 public class GamePanel extends JPanel implements ActionListener {
+    // constants for screen size, grid size, and game speed
     static final int SCREEN_WIDTH = 600;
     static final int SCREEN_HEIGHT = 600;
     static final int UNIT_SIZE = 25;
     static final int GAME_UNITS = (SCREEN_WIDTH * SCREEN_HEIGHT) / (UNIT_SIZE * UNIT_SIZE);
     static final int DELAY = 75;
 
+    // arrays to hold player snake positions
     final int x[] = new int[GAME_UNITS];
     final int y[] = new int[GAME_UNITS];
     int bodyParts = 3;
     int miceEaten;
-    char direction = 'R';
+    char direction = 'R'; // initial direction
 
+    // arrays to hold enemy snake positions
     final int enemyX[] = new int[GAME_UNITS];
     final int enemyY[] = new int[GAME_UNITS];
     int enemyParts = 3;
-    char enemyDir = 'L';
+    char enemyDir = 'L'; // initial enemy direction
     boolean enemyAlive = true;
 
+    // mouse (food) position
     int mouseX;
     int mouseY;
-    
+
+    // game state
     boolean running = false;
     Timer timer;
     Random random;
 
+    // images for background, mouse, player, enemy
     Image background;
     Image mouse;
     Image player;
     Image enemy1;
 
+    // whether to spawn an enemy snake
     boolean withEnemy;
 
+    // constructor initializes game panel
     GamePanel(boolean withEnemy) {
         this.withEnemy = withEnemy;
         random = new Random();
@@ -43,40 +53,43 @@ public class GamePanel extends JPanel implements ActionListener {
         this.setFocusable(true);
         this.addKeyListener(new MyKeyAdapter());
         background = new ImageIcon(getClass().getResource("/images/background.png")).getImage();
-        mouse =  new ImageIcon(getClass().getResource("/images/mouse.png")).getImage();
+        mouse = new ImageIcon(getClass().getResource("/images/mouse.png")).getImage();
         player = new ImageIcon(getClass().getResource("/images/player.png")).getImage();
         enemy1 = new ImageIcon(getClass().getResource("/images/enemy1.png")).getImage();
         startGame();
     }
 
+    // start or restart the game
     public void startGame() {
         newMouse();
         running = true;
         enemyAlive = true;
-        if(withEnemy){
+        if (withEnemy) {
             enemyX[0] = SCREEN_WIDTH - UNIT_SIZE;
             enemyY[0] = 0;
-        }  
+        }
         timer = new Timer(DELAY, this);
         timer.start();
     }
 
-    public void respawn(){
+    // respawn player snake after game over
+    public void respawn() {
         direction = 'R';
         bodyParts = 3;
         miceEaten = 0;
 
-        for(int i = 0; i < GAME_UNITS; i++){
+        for (int i = 0; i < GAME_UNITS; i++) {
             x[i] = 0;
             y[i] = 0;
         }
 
-        if(withEnemy){
+        if (withEnemy) {
             respawnEnemy();
         }
         startGame();
     }
 
+    // reset enemy snake
     public void respawnEnemy() {
         enemyDir = 'L';
         enemyParts = 3;
@@ -88,18 +101,22 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    // main paint method
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if(background != null){
+        if (background != null) {
             g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
         }
         draw(g);
     }
 
+    // draw player, enemy, food, and score
     public void draw(Graphics g) {
         if (running) {
+            // draw mouse (food)
             g.drawImage(mouse, mouseX, mouseY, UNIT_SIZE, UNIT_SIZE, this);
 
+            // draw player snake
             for (int i = 0; i < bodyParts; i++) {
                 if (i == 0) {
                     g.drawImage(player, x[0], y[0], UNIT_SIZE, UNIT_SIZE, this);
@@ -109,7 +126,8 @@ public class GamePanel extends JPanel implements ActionListener {
                 }
             }
 
-            if(enemyAlive && withEnemy){
+            // draw enemy snake if enabled
+            if (enemyAlive && withEnemy) {
                 for (int i = 0; i < enemyParts; i++) {
                     if (i == 0) {
                         g.drawImage(enemy1, enemyX[0], enemyY[0], UNIT_SIZE, UNIT_SIZE, this);
@@ -119,7 +137,8 @@ public class GamePanel extends JPanel implements ActionListener {
                     }
                 }
             }
-        
+
+            // draw score
             g.setColor(Color.yellow);
             g.setFont(new Font("Comic Sans", Font.BOLD, 40));
             FontMetrics metrics = getFontMetrics(g.getFont());
@@ -130,17 +149,18 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    // place new mouse in random valid position
     public void newMouse() {
         boolean validPos = false;
 
-        while(!validPos){
+        while (!validPos) {
             mouseX = random.nextInt((int) (SCREEN_WIDTH / UNIT_SIZE)) * UNIT_SIZE;
             mouseY = random.nextInt((int) (SCREEN_HEIGHT / UNIT_SIZE)) * UNIT_SIZE;
 
             validPos = true;
 
-            for(int i = 0; i < GAME_UNITS; i++){
-                if(x[i] == mouseX && y[i] == mouseY){
+            for (int i = 0; i < GAME_UNITS; i++) {
+                if (x[i] == mouseX && y[i] == mouseY) {
                     validPos = false;
                     break;
                 }
@@ -148,6 +168,7 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    // move player snake
     public void move() {
         for (int i = bodyParts; i > 0; i--) {
             x[i] = x[i - 1];
@@ -170,6 +191,7 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    // move enemy snake
     public void enemyMove() {
         for (int i = enemyParts; i > 0; i--) {
             enemyX[i] = enemyX[i - 1];
@@ -194,6 +216,7 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    // check if enemy’s new position is safe
     public boolean isDirectionSafe(int x, int y) {
         for (int i = 1; i < enemyParts; i++) {
             if (enemyX[i] == x && enemyY[i] == y) {
@@ -214,6 +237,7 @@ public class GamePanel extends JPanel implements ActionListener {
         return true;
     }
 
+    // pick enemy direction based on closest distance to food
     public void chooseDirection() {
         char[] directions = { 'U', 'D', 'L', 'R' };
         int bestDistance = Integer.MAX_VALUE;
@@ -250,17 +274,19 @@ public class GamePanel extends JPanel implements ActionListener {
         enemyDir = bestDirection;
     }
 
+    // check if player or enemy eats mouse
     public void checkMouse() {
         if ((x[0] == mouseX) && (y[0] == mouseY)) {
             bodyParts++;
             miceEaten++;
             newMouse();
-        }else if ((enemyX[0] == mouseX) && (enemyY[0] == mouseY)) {
+        } else if ((enemyX[0] == mouseX) && (enemyY[0] == mouseY)) {
             enemyParts++;
             newMouse();
         }
     }
 
+    // check for collisions involving player
     public void checkCollisions() {
         for (int i = bodyParts; i > 0; i--) {
             if ((x[0] == x[i]) && (y[0] == y[i])) {
@@ -273,20 +299,8 @@ public class GamePanel extends JPanel implements ActionListener {
                 running = false;
             }
         }
-       
-        if (x[0] < 0) {
-            running = false;
-        }
-       
-        if (x[0] > SCREEN_WIDTH) {
-            running = false;
-        }
-       
-        if (y[0] < 0) {
-            running = false;
-        }
-        
-        if (y[0] > SCREEN_HEIGHT) {
+
+        if (x[0] < 0 || x[0] > SCREEN_WIDTH || y[0] < 0 || y[0] > SCREEN_HEIGHT) {
             running = false;
         }
 
@@ -295,6 +309,7 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    // check for collisions involving enemy
     public void enemyCheckCollisions() {
         for (int i = enemyParts; i > 0; i--) {
             if ((enemyX[0] == enemyX[i]) && (enemyY[0] == enemyY[i])) {
@@ -308,19 +323,7 @@ public class GamePanel extends JPanel implements ActionListener {
             }
         }
 
-        if (enemyX[0] < 0) {
-            enemyAlive = false;
-        }
-
-        if (enemyX[0] > SCREEN_WIDTH) {
-            enemyAlive = false;
-        }
-
-        if (enemyY[0] < 0) {
-            enemyAlive = false;
-        }
-
-        if (enemyY[0] > SCREEN_HEIGHT) {
+        if (enemyX[0] < 0 || enemyX[0] > SCREEN_WIDTH || enemyY[0] < 0 || enemyY[0] > SCREEN_HEIGHT) {
             enemyAlive = false;
         }
 
@@ -329,6 +332,7 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    // draw game over screen
     public void gameOver(Graphics g) {
         g.setColor(Color.yellow);
         g.setFont(new Font("Comic Sans", Font.BOLD, 40));
@@ -342,10 +346,11 @@ public class GamePanel extends JPanel implements ActionListener {
         g.drawString("Game Over", (SCREEN_WIDTH - metrics2.stringWidth("Game Over")) / 2, SCREEN_HEIGHT / 2);
     }
 
+    // game loop tick
     @Override
     public void actionPerformed(ActionEvent e) {
         if (running) {
-            if(withEnemy){
+            if (withEnemy) {
                 enemyMove();
                 enemyCheckCollisions();
             }
@@ -356,6 +361,7 @@ public class GamePanel extends JPanel implements ActionListener {
         repaint();
     }
 
+    // keyboard input handler
     public class MyKeyAdapter extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
@@ -381,7 +387,7 @@ public class GamePanel extends JPanel implements ActionListener {
                     }
                     break;
                 case KeyEvent.VK_SPACE:
-                    if(!running){
+                    if (!running) {
                         respawn();
                     }
                     break;
